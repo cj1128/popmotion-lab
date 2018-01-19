@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <script src="node_modules/popmotion/dist/popmotion.global.min.js"></script>
+  <style type="text/css">
+    #ball{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin: auto;
+      margin-top: calc((100vh - 50px) / 2);
+      background: #14D790;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="ball"></div>
+
+  <script type="text/javascript">
+    const { pointer, listen, styler, tween, value, decay, spring, physics } = window.popmotion
+
+    const ball = document.querySelector("#ball")
+
+    function a() {
+      const ballStyler = styler(ball)
+
+      const startDragging = () => {
+        pointerTracker = pointer({
+          x: ballStyler.get("x"),
+          y: ballStyler.get("y"),
+        }).start(ballStyler.set)
+      }
+
+      const stopDragging = () => {
+        if(pointerTracker) pointerTracker.stop()
+      }
+
+      listen(ball, "mousedown").start(startDragging)
+      listen(document, "mouseup").start(stopDragging)
+    }
+
+    function b() {
+      const ballStyler = styler(ball)
+      const ballXY = value({x: 0, y: 0}, ballStyler.set)
+
+      const startDragging = () => {
+        pointer(ballXY.get()).start(ballXY)
+      }
+
+      const stopDragging = () => {
+        const velocity = ballXY.getVelocity()
+        // decay({ velocity }).start(ballXY)
+        spring({
+          from: ballXY.get(),
+          velocity,
+          stiffness: 150,
+          damping: 10
+        }).start(ballXY);
+      }
+
+      listen(ball, "mousedown").start(startDragging)
+      listen(document, "mouseup").start(stopDragging)
+    }
+
+    function c() {
+      const ballStyler = styler(ball)
+      const ballXY = value({x: 0, y: 0}, ballStyler.set)
+
+      let activeAction
+      let pointerTracker
+
+      const startDragging = () => {
+        activeAction = physics({
+            velocity: ballXY.getVelocity(),
+            friction: 0.6,
+            springStrength: 200,
+            restSpeed: false,
+            from: ballXY.get(),
+          }).start(ballXY)
+
+        pointerTracker = pointer(ballXY.get()).start(v => {
+          activeAction.setSpringTarget(v)
+        })
+      }
+
+      const stopDragging = () => {
+        if(activeAction) activeAction.stop()
+        if(pointerTracker) pointerTracker.stop()
+        spring({
+          from: ballXY.get(),
+          velocity: ballXY.getVelocity(),
+          stiffness: 150,
+          damping: 10
+        }).start(ballXY)
+      }
+
+      listen(ball, "mousedown").start(startDragging)
+      listen(document, "mouseup").start(stopDragging)
+    }
+
+    c()
+  </script>
+
+</body>
+</html>

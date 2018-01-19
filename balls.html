@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Balls</title>
+  <script src="node_modules/popmotion/dist/popmotion.global.min.js"></script>
+  <style type="text/css">
+    #ball{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin: auto;
+      margin-top: calc((100vh - 50px) / 2);
+      background: #14D790;
+    }
+  </style>
+</head>
+<body>
+  <div id="ball"></div>
+  <script type="text/javascript">
+    const { physics, tween, composite, easing, styler, calc } = window.popmotion
+    const { radiansToDegrees } = calc
+
+    function polarToCartesian({angle, radius, ...props}) {
+      return {
+        x: radius * Math.cos(angle),
+        y: radius * Math.sin(angle),
+        ...props,
+      }
+    }
+
+    function rotatePerpendicular({angle, ...props}) {
+      return {
+        rotate: radiansToDegrees(angle) + 90,
+        angle,
+        ...props,
+      }
+    }
+
+    const ball = document.querySelector("#ball")
+    const ballStyler = styler(ball)
+
+    // physics({
+    //   from: {angle: 0, radius: 200},
+    //   velocity: {angle: 5, radius: 0},
+    // }).pipe(polarToCartesian).start(ballStyler.set)
+
+    function start() {
+      physics({
+        from: {angle: 0, radius: 150},
+        velocity: {angle: 5, radius: 0},
+      }).pipe(polarToCartesian).start(ballStyler.set)
+
+      return
+
+      composite({
+        angle: physics({velocity: 5}),
+        radius: tween({
+          from: 0,
+          to: 150,
+          yoyo: Infinity,
+          easing: easing.easeinout,
+          duration: 2000,
+        })
+      }).pipe(polarToCartesian).start(ballStyler.set)
+    }
+
+    // start()
+  </script>
+</body>
+</html>

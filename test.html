@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <script src="node_modules/popmotion/dist/popmotion.global.min.js"></script>
+  <style type="text/css">
+    #ball{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin: auto;
+      margin-top: calc((100vh - 50px) / 2);
+      background: #14D790;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="ball"></div>
+
+  <script type="text/javascript">
+    const { pointer, listen, styler, tween, value } = window.popmotion
+
+    const div = styler(document.querySelector("#ball"))
+    const divX = value(0, div.set("x"))
+
+    tween({
+      to: 500,
+      duration: 3000,
+  }).start(divX)
+
+    // setInterval(() => {
+      // console.log(divX.getVelocity())
+    //   return
+    //   physics({
+    //     velocity: divX.getVelocity()
+    //   }).start(divX) // This will automatically `stop` the tween
+    // }, 100)
+  </script>
+
+</body>
+</html>
