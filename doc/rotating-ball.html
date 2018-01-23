@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rotate</title>
+  <script src="vendor/popmotion.global.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="base.css">
+  <style type="text/css">
+    #ball{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin: auto;
+      margin-top: 100px;
+      background: #14D790;
+    }
+  </style>
+</head>
+<body>
+  <h1>Rotating Ball</h1>
+
+  <div id="ball"></div>
+  <script type="text/javascript">
+    const { physics, composite, easing, styler, keyframes, value, spring } = window.popmotion
+
+    const ball = document.querySelector("#ball")
+    const ballStyler = styler(ball)
+    const ballXY = value({x: 0, y:0}, ballStyler.set)
+
+    function polarToCartesian({angle, radius, ...props}) {
+      return {
+        x: radius * Math.cos(angle),
+        y: radius * Math.sin(angle),
+        ...props,
+      }
+    }
+
+    composite({
+      angle: physics({velocity: 5}),
+      radius: keyframes({
+        values: [0, 200, 0],
+        duration: 3000,
+        easings: easing.linear,
+        loop: Infinity,
+      }),
+    }).pipe(polarToCartesian).start(ballXY)
+  </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Physics</title>
+  <script src="vendor/popmotion.global.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="base.css">
+  <style type="text/css">
+    body {
+      font-family: PingFang SC;
+    }
+    #ball{
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: auto;
+      margin-top: 200px;
+      background: #9B65DE;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      color: white;
+      font-size: 20px;
+    }
+    #ground {
+      height: 4px;
+      background: #f44f6c;
+      border-radius: 2px;
+      margin: auto;
+      width: 500px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Physics</h1>
+
+  <div id="ball">Tap</div>
+  <div id="ground"></div>
+
+  <script type="text/javascript">
+    const { pointer, listen, styler, tween, value, spring, physics, transform, timeline, easing, keyframes } = window.popmotion
+
+    const ball = document.querySelector("#ball")
+    const ballStyler = styler(ball)
+    const ballY = value(0, v => ballStyler.set("y", Math.min(0, v)))
+
+    const ballScale = value(1, v => {
+      ballStyler.set("scaleX", 1 + (1 - v))
+      ballStyler.set("scaleY", v)
+    })
+
+    const ballBorder = value({
+      borderColor: "",
+      borderWidth: 0,
+    }, ({borderColor, borderWidth}) => {
+      ballStyler.set({
+        boxShadow: `0 0 0 ${borderWidth}px ${borderColor}`,
+      })
+    })
+
+    let isFalling = false
+
+    const checkBounce = () => {
+      if(!isFalling || ballY.get() < 0) return
+      isFalling = false
+      const v = ballY.getVelocity()
+
+      const compression = spring({
+        from: 1,
+        to: 1,
+        velocity: -v * 0.01,
+        stiffness: 800,
+      }).pipe(s => {
+        if(s >= 1) {
+          s = 1
+          compression.stop()
+
+          if(v > 20) {
+            isFalling = true
+            gravity
+              .set(0)
+              .setVelocity(-v * 0.5)
+          }
+        }
+        return s
+      }).start(ballScale)
+    }
+
+    const checkFail = () => {
+      if(ballY.get() >= 0 && ball.innerHTML != "Tap") {
+        count = 0
+        tween({
+          from: { borderWidth: 0, borderColor: "rgba(255, 28, 104, 1)" },
+          to: { borderWidth: 30, borderColor: "rgba(255, 28, 104, 0)" },
+        }).start(ballBorder)
+
+        ball.innerHTML = "Tap"
+      }
+    }
+
+    const gravity = physics({
+      acceleration: 2500,
+      restSpeed: false,
+    }).start(v => {
+      ballY.update(v)
+      checkBounce(v)
+      checkFail(v)
+    })
+
+    let count = 0
+
+    listen(ball, "mousedown").start(e => {
+      e.preventDefault()
+      count++
+      ball.innerHTML = count
+
+      isFalling = true
+      ballScale.stop()
+      ballScale.update(1)
+
+      gravity
+        .set(Math.min(0, ballY.get()))
+        .setVelocity(-1200)
+
+      tween({
+        from: {borderWidth: 0, borderColor: "rgba(20, 215, 144, 1)"},
+        to: {borderWidth: 30, borderColor: "rgba(20, 215, 144, 0)"},
+      }).start(ballBorder)
+    })
+  </script>
+
+</body>
+</html>
