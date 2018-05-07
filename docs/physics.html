@@ -4,17 +4,17 @@
   <meta charset="UTF-8">
   <title>Physics</title>
   <script src="vendor/popmotion.global.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="base.css">
+  <link rel="stylesheet" type="text/css" href="vendor/bulma.min.css">
   <style type="text/css">
-    body {
-      font-family: PingFang SC;
+    .main {
+      height: 600px;
     }
     #ball{
       width: 100px;
       height: 100px;
       border-radius: 50%;
       margin: auto;
-      margin-top: 200px;
+      margin-top: 100px;
       background: #9B65DE;
       display: flex;
       align-items: center;
@@ -22,6 +22,7 @@
       color: white;
       font-size: 20px;
     }
+
     #ground {
       height: 4px;
       background: #f44f6c;
@@ -32,24 +33,31 @@
   </style>
 </head>
 <body>
-  <h1>Physics</h1>
-
-  <div id="ball">Tap</div>
-  <div id="ground"></div>
+  <div class="container">
+    <div class="level main">
+      <div class="level-item">
+        <div>
+          <h1 class="title has-text-centered">Physics</h1>
+          <div id="ball">Tap</div>
+          <div id="ground"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script type="text/javascript">
-    const { pointer, listen, styler, tween, value, spring, physics, transform, timeline, easing, keyframes } = window.popmotion
+    var { pointer, listen, styler, tween, value, spring, physics, transform, timeline, easing, keyframes } = window.popmotion
 
-    const ball = document.querySelector("#ball")
-    const ballStyler = styler(ball)
-    const ballY = value(0, v => ballStyler.set("y", Math.min(0, v)))
+    var ball = document.querySelector("#ball")
+    var ballStyler = styler(ball)
+    var ballY = value(0, v => ballStyler.set("y", Math.min(0, v)))
 
-    const ballScale = value(1, v => {
+    var ballScale = value(1, v => {
       ballStyler.set("scaleX", 1 + (1 - v))
       ballStyler.set("scaleY", v)
     })
 
-    const ballBorder = value({
+    var ballBorder = value({
       borderColor: "",
       borderWidth: 0,
     }, ({borderColor, borderWidth}) => {
@@ -58,14 +66,14 @@
       })
     })
 
-    let isFalling = false
+    var isFalling = false
 
-    const checkBounce = () => {
+    var checkBounce = () => {
       if(!isFalling || ballY.get() < 0) return
       isFalling = false
-      const v = ballY.getVelocity()
+      var v = ballY.getVelocity()
 
-      const compression = spring({
+      var compression = spring({
         from: 1,
         to: 1,
         velocity: -v * 0.01,
@@ -86,7 +94,7 @@
       }).start(ballScale)
     }
 
-    const checkFail = () => {
+    var checkFail = () => {
       if(ballY.get() >= 0 && ball.innerHTML != "Tap") {
         count = 0
         tween({
@@ -98,7 +106,7 @@
       }
     }
 
-    const gravity = physics({
+    var gravity = physics({
       acceleration: 2500,
       restSpeed: false,
     }).start(v => {
@@ -107,7 +115,7 @@
       checkFail(v)
     })
 
-    let count = 0
+    var count = 0
 
     listen(ball, "mousedown").start(e => {
       e.preventDefault()

@@ -3,18 +3,23 @@
 <head>
   <title>Popping Balls</title>
   <script src="vendor/popmotion.global.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="base.css">
+  <link rel="stylesheet" type="text/css" href="vendor/bulma.min.css">
+
   <style type="text/css">
-    body {
-      font-family: PingFang SC, sans-serif;
+    html {
       background: #383131;
     }
+
+    .main {
+      height: 600px;
+    }
+
     #btn{
       width: 200px;
       height: 50px;
       margin: auto;
       border-radius: 5px;
-      margin-top: 100px;
+      margin-top: 50px;
       background: #14D790;
       display: flex;
       align-items: center;
@@ -38,9 +43,16 @@
   </style>
 </head>
 <body>
-  <h1>Popping Balls</h1>
-
-  <div id="btn">Hover Me</div>
+  <div class="container">
+    <div class="level main">
+      <div class="level-item">
+        <div>
+          <h1 class="title has-text-centered has-text-white">Popping Balls</h1>
+          <div id="btn">Hover Me</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script type="text/javascript">
     const { physics, tween, composite, easing, styler, listen } = window.popmotion
@@ -85,8 +97,8 @@
     let animationIsRunning = false
     listen(btn, "mouseenter").start(startAnimation)
 
-    function randomVelocity() {
-      const absX = 100 + Math.random() * 50
+    const randomVelocity = () => {
+      var absX = 100 + Math.random() * 50
       return {
         x: Math.random() > 0.5 ? absX : -absX,
         y: -1000 - Math.random() * 200,
@@ -94,7 +106,7 @@
     }
 
     const randomAcc = () => {
-      const absX = 100 + Math.random() * 100
+      var absX = 100 + Math.random() * 100
       return {
         x: Math.random() > 0.5 ? absX : -absX,
         y: 2000 + Math.random() * 1500,
@@ -108,24 +120,24 @@
       let finishedCount = 0
       animationIsRunning = true
 
-      const BALL_COUNT = 20
+      let BALL_COUNT = 20
 
-      for(var i = 0; i < BALL_COUNT; i++) {
-        const ball = document.createElement("div")
+      for(let i = 0; i < BALL_COUNT; i++) {
+        let ball = document.createElement("div")
         ball.classList.add("ball")
         ball.style.backgroundColor = randomColor()
         btn.append(ball)
 
-        const ballStyler = styler(ball)
+        let ballStyler = styler(ball)
         ballStyler.set(startPos)
 
-        const animation = physics({
+        let animation = physics({
           from: ballStyler.get(),
           acceleration: randomAcc(),
           velocity: randomVelocity(),
           restSpeed: false,
         }).start(({x, y}) => {
-          const absY = y + startPos.y
+          let absY = y + startPos.y
           if(absY < windowHeight) {
             ballStyler.set({x, y})
           } else {

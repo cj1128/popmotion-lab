@@ -3,9 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <script src="vendor/popmotion.global.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="base.css">
-  <title>Every Fream</title>
+  <link rel="stylesheet" type="text/css" href="vendor/bulma.min.css">
+  <title>Every Frame</title>
   <style type="text/css">
+    .main {
+      height: 600px;
+    }
+
     body {
       --pink: #FF1C68;
       --green: #14D790;
@@ -14,15 +18,14 @@
       --purple: #9B65DE;
     }
 
-    .container {
+    .wrapper {
       display: flex;
       justify-content: space-around;
-      margin-top: 100px;
     }
 
     .balls {
       display: flex;
-      height: 75px;
+      height: 55px;
       align-items: stretch;
     }
 
@@ -30,7 +33,7 @@
       background: var(--purple);
       border-radius: 50%;
       margin-right: 25px;
-      width: 75px;
+      width: 55px;
     }
 
     .ball:nth-child(4n + 2) {
@@ -47,32 +50,38 @@
   </style>
 </head>
 <body>
-    <h1>Every Frame</h1>
+  <div class="container">
+    <div class="level main">
+      <div class="level-item">
+        <div>
+          <h1 class="title has-text-centered">Every Frame</h1>
 
-    <div class="container">
-      <div class="balls">
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
+          <div class="wrapper">
+            <div class="balls">
+              <div class="ball"></div>
+              <div class="ball"></div>
+              <div class="ball"></div>
+              <div class="ball"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
 
-    <script type="text/javascript">
-      const { everyFrame, styler } = window.popmotion
+  <script type="text/javascript">
+    var { everyFrame, styler } = window.popmotion
 
-      const balls = document.querySelectorAll(".ball")
-      const ballStylers = Array.from(balls).map(styler)
+    var balls = document.querySelectorAll(".ball")
+    var ballStylers = Array.from(balls).map(styler)
 
-      const distance = 150
+    var distance = 150
 
-      everyFrame().start(timestamp => {
-        ballStylers.map((s, i) => {
-          s.set("y", distance * Math.sin(0.004 * timestamp + i * 0.5))
-        })
+    everyFrame().start(timestamp => {
+      ballStylers.map((s, i) => {
+        s.set("y", distance * Math.sin(0.004 * timestamp + i * 0.5))
       })
-    </script>
-</div>
-
+    })
+  </script>
 </body>
 </html>
